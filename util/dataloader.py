@@ -27,12 +27,14 @@ def load_data(path_to_data, path_to_stopwords=None):
         line_splited = line.split()
         doc_name = line_splited[0][:15]
         if doc_name != cur_doc_name:
-            docs.append(cur_doc)
+            if len(cur_doc) != 0:
+                docs.append(cur_doc)
             cur_doc = []
             cur_doc_name = doc_name
-        else:
-            cur_line = [x[:x.rfind('/')] for x in line_splited[1:]]
-            if stopwords:
-                cur_line = [x for x in cur_line if x not in stopwords]
-            cur_doc += cur_line
+        cur_line = [x[:x.rfind('/')] for x in line_splited[1:]]
+        if stopwords:
+            cur_line = [x for x in cur_line if x not in stopwords]
+        cur_doc += cur_line
+    if len(cur_doc) != 0:
+        docs.append(cur_doc)
     return docs

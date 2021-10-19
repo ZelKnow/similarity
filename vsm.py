@@ -135,7 +135,7 @@ class VectorSpaceModel:
         """
         similarity = []
         length = math.ceil(self.num_docs / processes)
-        for idfs_1 in self.tfidfs[length * i:length * (i + 1)]:
+        for idfs_1 in self.tfidfs[length * i:length * (i + 1)]:  # 该进程负责运算的范围
             similarity.append([])
             for idfs_2 in self.tfidfs:
                 dot_product = compute_dot_product(idfs_1, idfs_2)  # 分子
@@ -149,17 +149,17 @@ class VectorSpaceModel:
         Args:
             processes (int): processes number.
         """
-        res = []
+        res = []  # 记录每个进程运算的结果
         with Pool(processes) as pool:
             for i in range(processes):
                 res.append(
                     pool.apply_async(self.compute_similarity_subprocess,
                                      (processes, i)))
-            pool.close()
+            pool.close()  # 关闭进程池
             pool.join()
         similarity = []
         for i in range(processes):
-            similarity += res[i].get()
+            similarity += res[i].get()  # 整合进程运算结果
         self.similarity = similarity
 
 
